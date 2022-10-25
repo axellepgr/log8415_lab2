@@ -17,8 +17,9 @@ def get_running_instances():
             instance_type = instance.instance_type
             id_list.append(id)
             nb_running_instances += 1
+            ip = instance.public_ip_address
             print(str(nb_running_instances) + '. ' + str(id) + ' : ' + str(instance_type) +
-                ' is running.')
+                ' is running. Public IP : ' + str(ip))
     return id_list
 
 def delete_sg():
@@ -38,7 +39,7 @@ def terminate_instance(id_list):
     for instanceID in id_list:
         boto3.resource('ec2').instances.filter(
             InstanceIds=[instanceID]).terminate()
-        print('Instance ' + str(instanceID) + ' shutting down.')
+        print('Instance ' + str(instanceID) + ' is shutting down.')
         
 def wait_for_instance_terminated(ids):
     """
@@ -50,7 +51,7 @@ def wait_for_instance_terminated(ids):
     waiter.wait(
         InstanceIds=ids
     )
-    print('Instances terminated.')
+    print('All instances terminated.')
     
 def shutdown_system(instances_ids):
     """

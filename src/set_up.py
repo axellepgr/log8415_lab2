@@ -98,5 +98,4 @@ create_ec2_instances(1, 0, sg_id, subnet_id)
 print("EC2 instances created!\n")
 
 time.sleep(20)
-print("Finished waiting.\n")
 print("\n############### DONE SETTING UP THE SYSTEM ###############\n")
