@@ -13,6 +13,7 @@ DESTINATION_PATH = '~'
 DESTINATION_PATH_2 = '~/usr/local/hadoop/sbin'
 FILE1 = "config.sh"
 FILE2 = "code/WordCount.java"
+FILE3 = "run_hadoop.sh"
 
 def envsetup(instanceID):
     str_instanceID = str(instanceID)
@@ -105,6 +106,11 @@ def deploy_hadoop(id_ip, instance_nb):
             )
     scp.put(
                 FILE2,
+                remote_path=DESTINATION_PATH,
+                recursive=False
+            )
+    scp.put(
+                FILE3,
                 remote_path=DESTINATION_PATH,
                 recursive=False
             )
