@@ -1,10 +1,16 @@
 import paramiko
+import scp
 import time
 import sys
 import boto3
+import os
+from os import getenv, path, system
+from dotenv import load_dotenv
+from scp import SCPClient
 
 AWS_REGION = 'us-east-1'
-
+DESTINATION_PATH = '~'
+FILE = "config.sh"
 
 def envsetup(instanceID):
     str_instanceID = str(instanceID)
@@ -82,15 +88,28 @@ def deploy_hadoop(id_ip, instance_nb):
     log_file = open("logfile.log", "w")
     print('env setup done \n stdout:', stdout.read(), file=log_file)
     log_file.close()
-    #print('env setup done \n stdout:', stdout.read())
-    #stdin, stdout, stderr = ssh.exec_command(deploy)
     print('Deployment done for instance number ' + str(instance_nb) + '\n')
+    # Send the config.sh file to the instance
+    scp = SCPClient(ssh.get_transport())
+    scp.put(
+                FILE,
+                remote_path=DESTINATION_PATH,
+                recursive=False
+            )
+    scp.close()
     ssh.close()
 
 
 def deploy_app():
-    instances_IDs_IPs = get_id_ips()
-    id_ip = instances_IDs_IPs[0]
+    running = False
+    while (not running):
+        try:
+            instances_IDs_IPs = get_id_ips()
+            id_ip = instances_IDs_IPs[0]
+            running = True
+        except:
+            print("Waiting for the instance to be running .. (10s)")
+            system.wait(10)
     print(id_ip)
     instance_count = 0
     t = {}
