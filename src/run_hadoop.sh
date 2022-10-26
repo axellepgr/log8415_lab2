@@ -1,4 +1,4 @@
-curl https://www.gutenberg.org/cache/epub/4300/pg4300.txt > pg4300.txt
+curl -k -L -s --compressed https://www.gutenberg.org/cache/epub/4300/pg4300.txt > pg4300.txt
 export PATH=$PATH:/usr/local/hadoop/bin/
 hdfs dfs -mkdir input
 hdfs dfs -copyFromLocal pg4300.txt input
