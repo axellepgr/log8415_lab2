@@ -101,13 +101,20 @@ def deploy_hadoop(id_ip, instance_nb):
                 remote_path=DESTINATION_PATH,
                 recursive=False
             )
-    scp.clode()
+    scp.close()
     ssh.close()
 
 
 def deploy_app():
-    instances_IDs_IPs = get_id_ips()
-    id_ip = instances_IDs_IPs[0]
+    running = False
+    while (not running):
+        try:
+            instances_IDs_IPs = get_id_ips()
+            id_ip = instances_IDs_IPs[0]
+            running = True
+        except:
+            print("Waiting for the instance to be running .. (10s)")
+            system.wait(10)
     print(id_ip)
     instance_count = 0
     t = {}
