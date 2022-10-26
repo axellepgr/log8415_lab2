@@ -25,12 +25,7 @@ EOF
 
 '''
 cd /usr/local/hadoop/sbin/start-all.sh
-export JAVA_HOME=/home/sagar/Downloads/jdk1.8.0_311
-deploy = """
-sudo adduser hdoopTP
-su - hdoopTP
-wget https://downloads.apache.org/hadoop/common/hadoop-3.2.4/hadoop-3.2.4.tar.gz
-tar xzf hadoop-3.2.1.tar.gz
+
 """
 '''
 
