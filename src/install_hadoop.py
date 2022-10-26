@@ -10,7 +10,9 @@ from scp import SCPClient
 
 AWS_REGION = 'us-east-1'
 DESTINATION_PATH = '~'
-FILE = "config.sh"
+DESTINATION_PATH_2 = '~/usr/local/hadoop/sbin'
+FILE1 = "config.sh"
+FILE2 = "code/WordCount.java"
 
 def envsetup(instanceID):
     str_instanceID = str(instanceID)
@@ -92,7 +94,12 @@ def deploy_hadoop(id_ip, instance_nb):
     # Send the config.sh file to the instance
     scp = SCPClient(ssh.get_transport())
     scp.put(
-                FILE,
+                FILE1,
+                remote_path=DESTINATION_PATH,
+                recursive=False
+            )
+    scp.put(
+                FILE2,
                 remote_path=DESTINATION_PATH,
                 recursive=False
             )
