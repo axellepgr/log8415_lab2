@@ -16,4 +16,7 @@ export PATH=$PATH:/usr/local/hadoop/bin/
 
 mv ~/run_hadoop.sh /usr/local/hadoop/sbin
 mv ~/WordCount.java /usr/local/hadoop/sbin
-(cd /usr/local/hadoop/sbin/ ; sh run_hadoop.sh)
+mv ~/run_hadoop_friends.sh /usr/local/hadoop/sbin
+mv ~/FriendRecommendation.java /usr/local/hadoop/sbin
+mv ~/TP2-dataset.zip /usr/local/hadoop/sbin
+# (cd /usr/local/hadoop/sbin/ ; sh run_hadoop.sh)

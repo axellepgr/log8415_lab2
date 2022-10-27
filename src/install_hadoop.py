@@ -14,6 +14,9 @@ DESTINATION_PATH_2 = '~/usr/local/hadoop/sbin'
 FILE1 = "config.sh"
 FILE2 = "code/WordCount.java"
 FILE3 = "run_hadoop.sh"
+FILE4 = "code/FriendRecommendation.java"
+FILE5 = "TP2-dataset.zip"
+
 
 def envsetup(instanceID):
     str_instanceID = str(instanceID)
@@ -32,11 +35,13 @@ sudo mv input /usr/local/hadoop/hdfs/input
 EOF
 """
 
+
 '''
 cd /usr/local/hadoop/sbin/start-all.sh
 
 """
 '''
+
 
 def ssh_connect_with_retry(ssh, ip_address, retries):
     if retries > 3:
@@ -74,7 +79,8 @@ def get_id_ips():
             public_ip = instance["PublicIpAddress"]
             private_ip = instance["PrivateIpAddress"]
             ids.append((instance_id, public_ip))
-            print(f"instance id :{instance_id}, instance type: {instance_type}, public ip:{public_ip}, private ip:{private_ip}")
+            print(
+                f"instance id :{instance_id}, instance type: {instance_type}, public ip:{public_ip}, private ip:{private_ip}")
     print("\n")
     return ids
 
@@ -95,20 +101,30 @@ def deploy_hadoop(id_ip, instance_nb):
     # Send the config.sh file to the instance
     scp = SCPClient(ssh.get_transport())
     scp.put(
-                FILE1,
-                remote_path=DESTINATION_PATH,
-                recursive=False
-            )
+        FILE1,
+        remote_path=DESTINATION_PATH,
+        recursive=False
+    )
     scp.put(
-                FILE2,
-                remote_path=DESTINATION_PATH,
-                recursive=False
-            )
+        FILE2,
+        remote_path=DESTINATION_PATH,
+        recursive=False
+    )
     scp.put(
-                FILE3,
-                remote_path=DESTINATION_PATH,
-                recursive=False
-            )
+        FILE3,
+        remote_path=DESTINATION_PATH,
+        recursive=False
+    )
+    scp.put(
+        FILE4,
+        remote_path=DESTINATION_PATH,
+        recursive=False
+    )
+    scp.put(
+        FILE5,
+        remote_path=DESTINATION_PATH,
+        recursive=False
+    )
     scp.close()
     ssh.close()
 
@@ -127,7 +143,6 @@ def deploy_app():
     instance_count = 0
     t = {}
     deploy_hadoop(id_ip, instance_count)
-
 
 
 print("\n############### Installing Hadoop ###############\n")
