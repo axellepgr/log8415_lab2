@@ -5,17 +5,16 @@ import sys
 import boto3
 import os
 from os import getenv, path, system
-from dotenv import load_dotenv
+from os import listdir
+from os.path import isfile, join
 from scp import SCPClient
 
 AWS_REGION = 'us-east-1'
 DESTINATION_PATH = '~'
 DESTINATION_PATH_2 = '~/usr/local/hadoop/sbin'
-FILE1 = "config.sh"
-FILE2 = "code/WordCount.java"
-FILE3 = "run_hadoop.sh"
-FILE4 = "code/FriendRecommendation.java"
-FILE5 = "TP2-dataset.zip"
+FILE1 = "code/WordCount.java"
+files_list = [f for f in listdir("scripts/") if isfile(join("scripts/", f))]
+FILES = [f'scripts/{f}' for f in files_list]
 
 
 def envsetup(instanceID):
@@ -28,10 +27,9 @@ wget https://downloads.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1.tar.gz
 tar -xzvf hadoop-3.3.1.tar.gz
 sudo mv hadoop-3.3.1 /usr/local/hadoop
 readlink -f /usr/bin/java | sed "s:bin/java::"
-mkdir input
-cd input
-curl https://www.gutenberg.org/cache/epub/4300/pg4300.txt > pg4300.txt
-sudo mv input /usr/local/hadoop/hdfs/input
+curl https://archive.apache.org/dist/spark/spark-2.0.0/spark-2.0.0.tgz > spark-2.0.0.tgz
+tar -zxvf spark-2.0.0.tgz
+sudo mv spark-2.0.0 /usr/local/spark
 EOF
 """
 
@@ -91,7 +89,6 @@ def deploy_hadoop(id_ip, instance_nb):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh_connect_with_retry(ssh, ip_address, 0)
-    print('this is id_ip[0]', id_ip[0])
     stdin, stdout, stderr = ssh.exec_command(envsetup(id_ip[0]))
     old_stdout = sys.stdout
     log_file = open("logfile.log", "w")
@@ -106,26 +103,10 @@ def deploy_hadoop(id_ip, instance_nb):
         recursive=False
     )
     scp.put(
-        FILE2,
+        FILES,
         remote_path=DESTINATION_PATH,
-        recursive=False
+        recursive=True
     )
-    scp.put(
-        FILE3,
-        remote_path=DESTINATION_PATH,
-        recursive=False
-    )
-    scp.put(
-        FILE4,
-        remote_path=DESTINATION_PATH,
-        recursive=False
-    )
-    scp.put(
-        FILE5,
-        remote_path=DESTINATION_PATH,
-        recursive=False
-    )
-    scp.close()
     ssh.close()
 
 
@@ -138,10 +119,8 @@ def deploy_app():
             running = True
         except:
             print("Waiting for the instance to be running .. (10s)")
-            system.wait(10)
-    print(id_ip)
+            time.sleep(10)
     instance_count = 0
-    t = {}
     deploy_hadoop(id_ip, instance_count)
 
 
