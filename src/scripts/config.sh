@@ -24,6 +24,6 @@ mv ~/WordCount.java /usr/local/hadoop/sbin
 # Retrieving files and running hadoop 
 (cd /usr/local/hadoop/sbin/ ; bash get_files.sh)
 echo "######### Start Hadoop #########"
-(cd /usr/local/hadoop/sbin/ ; sh run_hadoop.sh)
+(cd /usr/local/hadoop/sbin/ ; bash time.sh)
 echo -e "\nIf that failed, try running : \n"
-echo -e "$              cd /usr/local/hadoop/sbin/ && sh run_hadoop.sh \n"
+echo -e "$              cd /usr/local/hadoop/sbin/ && bash <your_file>.sh \n"

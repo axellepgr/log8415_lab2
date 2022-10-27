@@ -8,3 +8,5 @@ read file
 hdfs dfs -rm -r output/
 hadoop jar wc.jar WordCount input/$file output
 hadoop fs -cat output/part-r-00000
+mkdir results
+cp output/part-r-00000 results/"result_$file"

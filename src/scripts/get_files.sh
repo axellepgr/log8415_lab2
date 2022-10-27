@@ -2,11 +2,9 @@
 
 input_file="experiment_files.txt"
 export PATH=$PATH:/usr/local/hadoop/bin/
-
-curl -k -L -s --compressed https://www.gutenberg.org/cache/epub/4300/pg4300.txt > pg4300.txt
+hadoop com.sun.tools.javac.Main WordCount.java
+jar cf wc.jar WordCount*.class
 hdfs dfs -mkdir input
-hdfs dfs -copyFromLocal pg4300.txt input
-rm pg4300.txt
 echo "Getting 9 files ..."
 i=0
 cr=$'\r'
