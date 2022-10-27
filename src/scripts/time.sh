@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script runs WordCount program on Hadoop 3 times on all datasets and measures the execution time
+
 FILES="input/*.txt"
 
 export PATH=$PATH:/usr/local/hadoop/bin/

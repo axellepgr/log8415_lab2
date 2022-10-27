@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script retrieves the files and puts them into the input/ folder
+
 input_file="experiment_files.txt"
 export PATH=$PATH:/usr/local/hadoop/bin/
 hadoop com.sun.tools.javac.Main WordCount.java

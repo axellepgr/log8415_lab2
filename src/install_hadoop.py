@@ -26,10 +26,9 @@ wget https://downloads.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1.tar.gz
 tar -xzvf hadoop-3.3.1.tar.gz
 sudo mv hadoop-3.3.1 /usr/local/hadoop
 readlink -f /usr/bin/java | sed "s:bin/java::"
-mkdir input
-cd input
-curl https://www.gutenberg.org/cache/epub/4300/pg4300.txt > pg4300.txt
-sudo mv input /usr/local/hadoop/hdfs/input
+curl https://archive.apache.org/dist/spark/spark-2.0.0/spark-2.0.0.tgz > spark-2.0.0.tgz
+tar -zxvf spark-2.0.0.tgz
+sudo mv spark-2.0.0 /usr/local/spark
 EOF
 """
 
