@@ -1,4 +1,5 @@
-hdfs dfs -rm output
+export PATH=$PATH:/usr/local/hadoop/bin/
+hdfs dfs -rm -r output/
 echo "\n Files available : \n"
 hadoop fs -ls input/
 echo "\nPlease select file : "
