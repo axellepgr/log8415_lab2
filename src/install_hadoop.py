@@ -5,15 +5,16 @@ import sys
 import boto3
 import os
 from os import getenv, path, system
-from dotenv import load_dotenv
+from os import listdir
+from os.path import isfile, join
 from scp import SCPClient
 
 AWS_REGION = 'us-east-1'
 DESTINATION_PATH = '~'
 DESTINATION_PATH_2 = '~/usr/local/hadoop/sbin'
-FILE1 = "config.sh"
-FILE2 = "code/WordCount.java"
-FILE3 = "run_hadoop.sh"
+FILE1 = "code/WordCount.java"
+files_list = [f for f in listdir("scripts/") if isfile(join("scripts/", f))]
+FILES = [f'scripts/{f}' for f in files_list]
 
 def envsetup(instanceID):
     str_instanceID = str(instanceID)
@@ -85,7 +86,6 @@ def deploy_hadoop(id_ip, instance_nb):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh_connect_with_retry(ssh, ip_address, 0)
-    print('this is id_ip[0]', id_ip[0])
     stdin, stdout, stderr = ssh.exec_command(envsetup(id_ip[0]))
     old_stdout = sys.stdout
     log_file = open("logfile.log", "w")
@@ -100,16 +100,10 @@ def deploy_hadoop(id_ip, instance_nb):
                 recursive=False
             )
     scp.put(
-                FILE2,
+                FILES,
                 remote_path=DESTINATION_PATH,
-                recursive=False
+                recursive=True
             )
-    scp.put(
-                FILE3,
-                remote_path=DESTINATION_PATH,
-                recursive=False
-            )
-    scp.close()
     ssh.close()
 
 
@@ -123,9 +117,7 @@ def deploy_app():
         except:
             print("Waiting for the instance to be running .. (10s)")
             system.wait(10)
-    print(id_ip)
     instance_count = 0
-    t = {}
     deploy_hadoop(id_ip, instance_count)
 
 
