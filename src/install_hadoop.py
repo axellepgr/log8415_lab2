@@ -116,7 +116,7 @@ def deploy_app():
             running = True
         except:
             print("Waiting for the instance to be running .. (10s)")
-            system.wait(10)
+            time.sleep(10)
     instance_count = 0
     deploy_hadoop(id_ip, instance_count)
 

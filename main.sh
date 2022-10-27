@@ -8,6 +8,7 @@ then
     pip3 install paramiko==2.11.0
     pip3 install requests==2.22.0
     pip3 install matplotlib==3.0.3
+    pip3 install scpclient
 
     echo "Clonning the git repo to proceed with the deployment"
     git clone https://github.com/axellepgr/log8415_lab2.git
@@ -25,6 +26,7 @@ else
     pip install botocore==1.27.89
     pip install paramiko==2.11.0
     pip install requests==2.22.0
+    pip install scpclient
 
     echo "Clonning the git repo to proceed with the deployment"
     git clone https://github.com/axellepgr/log8415_lab2.git
