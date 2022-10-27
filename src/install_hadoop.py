@@ -12,9 +12,11 @@ from scp import SCPClient
 AWS_REGION = 'us-east-1'
 DESTINATION_PATH = '~'
 DESTINATION_PATH_2 = '~/usr/local/hadoop/sbin'
-FILE1 = "code/WordCount.java"
-files_list = [f for f in listdir("scripts/") if isfile(join("scripts/", f))]
-FILES = [f'scripts/{f}' for f in files_list]
+files_list1 = [f for f in listdir("code/") if isfile(join("code/", f))]
+FILE1 = [f'code/{f}' for f in files_list1]
+files_list2 = [f for f in listdir("scripts/") if isfile(join("scripts/", f))]
+FILES = [f'scripts/{f}' for f in files_list2]
+DATASET = "TP2-dataset.zip"
 
 
 def envsetup(instanceID):
@@ -100,12 +102,17 @@ def deploy_hadoop(id_ip, instance_nb):
     scp.put(
         FILE1,
         remote_path=DESTINATION_PATH,
-        recursive=False
+        recursive=True
     )
     scp.put(
         FILES,
         remote_path=DESTINATION_PATH,
         recursive=True
+    )
+    scp.put(
+        DATASET,
+        remote_path=DESTINATION_PATH,
+        recursive=False
     )
     ssh.close()
 
