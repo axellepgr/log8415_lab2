@@ -20,86 +20,74 @@ import java.util.*;
 
 public class FriendRecommendation {
 
-    static public class FriendCountWritable implements Writable {
-        public Long user;
-        public Long mutualFriend;
+    public static class Map extends Mapper<LongWritable, Text, LongWritable, MutualFriendsWritable> {
 
-        public FriendCountWritable(Long user, Long mutualFriend) {
-            this.user = user;
-            this.mutualFriend = mutualFriend;
-        }
-
-        public FriendCountWritable() {
-            this(-1L, -1L);
-        }
-
-        @Override
-        public void write(DataOutput out) throws IOException {
-            out.writeLong(user);
-            out.writeLong(mutualFriend);
-        }
-
-        @Override
-        public void readFields(DataInput in) throws IOException {
-            user = in.readLong();
-            mutualFriend = in.readLong();
-        }
-
-        @Override
-        public String toString() {
-            return " toUser: "
-                    + Long.toString(user) + " mutualFriend: " + Long.toString(mutualFriend);
-        }
-    }
-
-    public static class Map extends Mapper<LongWritable, Text, LongWritable, FriendCountWritable> {
-        private Text word = new Text();
-
-        @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            //This section is the processing of one line 
+            //In the format: userId friendId1, firendId2, friendsId3 ...
             String line[] = value.toString().split("\t");
             Long fromUser = Long.parseLong(line[0]);
+            //list of first degree friends of the user
             List<Long> toUsers = new ArrayList<Long>();
 
             if (line.length == 2) {
                 StringTokenizer tokenizer = new StringTokenizer(line[1], ",");
+                //go throw all the 1st degree friends
                 while (tokenizer.hasMoreTokens()) {
                     Long toUser = Long.parseLong(tokenizer.nextToken());
                     toUsers.add(toUser);
-                    context.write(new LongWritable(fromUser), new FriendCountWritable(toUser, -1L));
+                    //add the a relationship between the user and his first degree friend
+                    //by witing it to the contex by adding a -1 means they are first degree friends
+                    //so that this relationship will not be taken into consideration when chosing mutual friends
+                    context.write(new LongWritable(fromUser), new MutualFriendsWritable(toUser, -1L));
                 }
-
+                //For all the friends
+                //Create a new pair (friendId1, friendId2) since they are mutual 
+                //friends through the current user that is being processed aka fromUser
                 for (int i = 0; i < toUsers.size(); i++) {
                     for (int j = i + 1; j < toUsers.size(); j++) {
-                        context.write(new LongWritable(toUsers.get(i)), new FriendCountWritable((toUsers.get(j)), fromUser));
-                        context.write(new LongWritable(toUsers.get(j)), new FriendCountWritable((toUsers.get(i)), fromUser));
+                        context.write(new LongWritable(toUsers.get(i)), new MutualFriendsWritable((toUsers.get(j)), fromUser));
+                        context.write(new LongWritable(toUsers.get(j)), new MutualFriendsWritable((toUsers.get(i)), fromUser));
                     }
                 }
             }
         }
     }
 
-    public static class Reduce extends Reducer<LongWritable, FriendCountWritable, LongWritable, Text> {
-        @Override
-        public void reduce(LongWritable key, Iterable<FriendCountWritable> values, Context context)
+    //In the map phase we should have something like this:
+    //u1 u2, u3
+    //1st aka we don't really care
+    //(key, val) - the key is just a Long and the value is the MutualFriendWritable
+    //(u1, (u2, -1L))
+    //(u2, (u3, -1L))
+    //2nd deg aka possible recommendation
+    //(u2, (u3, u1))
+    //(u3, (u2, u1))
+
+    public static class Reduce extends Reducer<LongWritable, MutualFriendsWritable, LongWritable, Text> {
+        public void reduce(LongWritable key, Iterable<MutualFriendsWritable> values, Context context)
                 throws IOException, InterruptedException {
 
-            // key is the recommended friend, and value is the list of mutual friends
+            // for each recommanded friend hol a list of the mutal friends
+            //Our goal is to pick the second degree friend with the most mutual friends
+            //final is important because the same list is used by all the workers
             final java.util.Map<Long, List<Long>> mutualFriends = new HashMap<Long, List<Long>>();
-
-            for (FriendCountWritable val : values) {
-                final Boolean isAlreadyFriend = (val.mutualFriend == -1);
+            //All the writable that share a key
+            for (MutualFriendsWritable val : values) {
                 final Long toUser = val.user;
                 final Long mutualFriend = val.mutualFriend;
 
                 if (mutualFriends.containsKey(toUser)) {
-                    if (isAlreadyFriend) {
+                    if (mutualFriend == -1) {
+                        //we nullify the list of common friends if they are already friends
                         mutualFriends.put(toUser, null);
-                    } else if (mutualFriends.get(toUser) != null) {
+                    } else if (mutualFriends.get(toUser) != null) { //if it is null we don't overide
+                        //we append the new recommendation if the they are not friends
                         mutualFriends.get(toUser).add(mutualFriend);
                     }
-                } else {
-                    if (!isAlreadyFriend) {
+                } else { //if the hash map does not contain the key to that user we add him
+                    //we follow the same logic as above
+                    if (mutualFriend != -1) {
                         mutualFriends.put(toUser, new ArrayList<Long>() {
                             {
                                 add(mutualFriend);
@@ -111,18 +99,21 @@ public class FriendRecommendation {
                 }
             }
 
-            java.util.SortedMap<Long, List<Long>> sortedMutualFriends = new TreeMap<Long, List<Long>>(new Comparator<Long>() {
-                @Override
-                public int compare(Long key1, Long key2) {
-                    Integer v1 = mutualFriends.get(key1).size();
-                    Integer v2 = mutualFriends.get(key2).size();
-                    if (v1 > v2) {
+            //sorting the friends recommandation based on the number of friends
+            SortedMap<Long, List<Long>> sortedMutualFriends = new TreeMap<Long, List<Long>>(new Comparator<Long>() {
+                public int compare(Long k1, Long k2) {
+                    Integer nbrFriends1 = mutualFriends.get(k1).size();
+                    Integer nbrFriends2 = mutualFriends.get(k2).size();
+                    Integer diff = nbrFriends2 - nbrFriends1;
+                    //if it has less number of friends it goes lower in the tree
+                    if (diff < 0){
                         return -1;
-                    } else if (v1.equals(v2) && key1 < key2) {
-                        return -1;
-                    } else {
-                        return 1;
                     }
+                    //if they have the same number of friends return in ascending order
+                    if (diff == 0 && k1 < k2){
+                        return -1;
+                    }
+                    return 1;
                 }
             });
 
@@ -132,17 +123,50 @@ public class FriendRecommendation {
                 }
             }
 
-            Integer i = 0;
+            int i = 0;
             String output = "";
             for (java.util.Map.Entry<Long, List<Long>> entry : sortedMutualFriends.entrySet()) {
                 if (i == 0) {
-                    output = entry.getKey().toString() + " (" + entry.getValue().size() + ": " + entry.getValue() + ")";
+                    output = entry.getKey().toString();
                 } else {
-                    output += "," + entry.getKey().toString() + " (" + entry.getValue().size() + ": " + entry.getValue() + ")";
+                    output += "," + entry.getKey().toString();
+                }
+                if (i == 9){
+                    // we only want the 10 most 
+                    break;
                 }
                 ++i;
             }
+            //is the current user that is being parsed
+            //will write a tab directly
+            //output is the string of mutual friends separated by a comma
             context.write(key, new Text(output));
+        }
+    }
+
+      static public class MutualFriendsWritable implements Writable {
+        public Long user;
+        public Long mutualFriend;
+
+        //Creats a new MutualFriendsWritable objects
+        //The user id and the list of mutual friends as attributes
+        public MutualFriendsWritable(Long user, Long mutualFriend) {
+            this.user = user;
+            this.mutualFriend = mutualFriend;
+        }
+        //-1 will mean no relationship
+        public MutualFriendsWritable() {
+            this(-1L, -1L);
+        }
+
+        public void write(DataOutput out) throws IOException {
+            out.writeLong(user);
+            out.writeLong(mutualFriend);
+        }
+
+        public void readFields(DataInput in) throws IOException {
+            user = in.readLong();
+            mutualFriend = in.readLong();
         }
     }
 
@@ -152,20 +176,16 @@ public class FriendRecommendation {
         Job job = new Job(conf, "FriendRecommendation");
         job.setJarByClass(FriendRecommendation.class);
         job.setOutputKeyClass(LongWritable.class);
-        job.setOutputValueClass(FriendCountWritable.class);
+        job.setOutputValueClass(MutualFriendsWritable.class);
 
         job.setMapperClass(Map.class);
         job.setReducerClass(Reduce.class);
-
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
-
         FileSystem outFs = new Path(args[1]).getFileSystem(conf);
         outFs.delete(new Path(args[1]), true);
-
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
-
         job.waitForCompletion(true);
     }
 }
