@@ -17,6 +17,7 @@ FILE1 = [f'code/{f}' for f in files_list1]
 files_list2 = [f for f in listdir("scripts/") if isfile(join("scripts/", f))]
 FILES = [f'scripts/{f}' for f in files_list2]
 DATASET = "TP2-dataset.zip"
+pyspark_word = "pyspark_wordcount.py"
 
 
 def envsetup(instanceID):
@@ -111,6 +112,11 @@ def deploy_hadoop(id_ip, instance_nb):
     )
     scp.put(
         DATASET,
+        remote_path=DESTINATION_PATH,
+        recursive=False
+    )
+    scp.put(
+        pyspark_word,
         remote_path=DESTINATION_PATH,
         recursive=False
     )
