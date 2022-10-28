@@ -1,5 +1,4 @@
 #! /bin/bash
-
 sed -i 's/# export JAVA_HOME=/export JAVA_HOME=\/usr\/lib\/jvm\/java-11-openjdk-amd64\//' /usr/local/hadoop/etc/hadoop/hadoop-env.sh
 # install Java
 yes | sudo apt-get install openjdk-11-jdk

@@ -2,8 +2,25 @@ import pyspark
 import timeit
 sc = pyspark.SparkContext('local[*]')
 
-dataset1 = sc.textFile('').flatMap(lambda line: line.split(' '))
-dataset2 = sc.textFile('').flatMap(lambda line: line.split(' '))
+experiment_files = "./experiment_files.txt"
+def load_experiment_files(experiment_files):
+    with open(experiment_files, 'r', encoding='utf-8') as f:
+        raw_lines = f.readlines()
+    return [x.strip() for x in raw_lines]
+data =load_experiment_files(experiment_files)
+
+for i in range(9):
+    dataset = sc.textFile(data[i]).flatMap(lambda line: line.split(' '))
+    map_reduce = dataset.map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
+    print( timeit.timeit(map_reduce, number=1))
+
+
+
+
+
+'''
+dataset1 = sc.textFile(data[0]).flatMap(lambda line: line.split(' '))
+dataset2 = sc.textFile(data[0]).flatMap(lambda line: line.split(' '))
 dataset3 = sc.textFile('').flatMap(lambda line: line.split(' '))
 dataset4 = sc.textFile('').flatMap(lambda line: line.split(' '))
 dataset5 = sc.textFile('').flatMap(lambda line: line.split(' '))
@@ -34,3 +51,5 @@ print("Time for file 6", timeit.timeit(map_reduce_file6, number=1))
 print("Time for file 7", timeit.timeit(map_reduce_file7, number=1))
 print("Time for file 8", timeit.timeit(map_reduce_file8, number=1))
 print("Time for file 9", timeit.timeit(map_reduce_file9, number=1))
+
+'''
