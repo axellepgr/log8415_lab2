@@ -18,7 +18,6 @@ files_list2 = [f for f in listdir("scripts/") if isfile(join("scripts/", f))]
 FILES = [f'scripts/{f}' for f in files_list2]
 DATASET = "TP2-dataset.zip"
 
-
 def envsetup(instanceID):
     str_instanceID = str(instanceID)
     return """
@@ -32,16 +31,9 @@ readlink -f /usr/bin/java | sed "s:bin/java::"
 curl https://archive.apache.org/dist/spark/spark-2.0.0/spark-2.0.0.tgz > spark-2.0.0.tgz
 tar -zxvf spark-2.0.0.tgz
 sudo mv spark-2.0.0 /usr/local/spark
+cp experiment_files.txt experiment_files_hadoop.txt
 EOF
 """
-
-
-'''
-cd /usr/local/hadoop/sbin/start-all.sh
-
-"""
-'''
-
 
 def ssh_connect_with_retry(ssh, ip_address, retries):
     if retries > 3:
@@ -60,7 +52,6 @@ def ssh_connect_with_retry(ssh, ip_address, retries):
         time.sleep(interval)
         print('Retrying SSH connection to {}'.format(ip_address))
         ssh_connect_with_retry(ssh, ip_address, retries)
-
 
 def get_id_ips():
     ec2_client = boto3.client("ec2", region_name=AWS_REGION)
@@ -83,7 +74,6 @@ def get_id_ips():
                 f"instance id :{instance_id}, instance type: {instance_type}, public ip:{public_ip}, private ip:{private_ip}")
     print("\n")
     return ids
-
 
 def deploy_hadoop(id_ip, instance_nb):
     ip_address = id_ip[1]
@@ -115,7 +105,6 @@ def deploy_hadoop(id_ip, instance_nb):
         recursive=False
     )
     ssh.close()
-
 
 def deploy_app():
     running = False
