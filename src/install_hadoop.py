@@ -31,7 +31,6 @@ readlink -f /usr/bin/java | sed "s:bin/java::"
 curl https://archive.apache.org/dist/spark/spark-2.0.0/spark-2.0.0.tgz > spark-2.0.0.tgz
 tar -zxvf spark-2.0.0.tgz
 sudo mv spark-2.0.0 /usr/local/spark
-cp experiment_files.txt experiment_files_hadoop.txt
 EOF
 """
 
