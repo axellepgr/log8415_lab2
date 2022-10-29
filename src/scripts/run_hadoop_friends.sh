@@ -1,3 +1,5 @@
+# This script ...
+
 sudo apt-get install unzip
 unzip TP2-dataset.zip
 export PATH=$PATH:/usr/local/hadoop/bin/

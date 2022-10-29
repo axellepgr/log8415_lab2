@@ -1,3 +1,5 @@
+# This script runs hadoop on selected file
+
 export PATH=$PATH:/usr/local/hadoop/bin/
 hadoop com.sun.tools.javac.Main WordCount.java
 jar cf wc.jar WordCount*.class

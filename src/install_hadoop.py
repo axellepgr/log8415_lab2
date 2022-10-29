@@ -19,6 +19,10 @@ FILES = [f'scripts/{f}' for f in files_list2]
 DATASET = "TP2-dataset.zip"
 
 def envsetup(instanceID):
+    """
+    This function sets up the environment on the selected instance.
+    instanceID : the id of the instance
+    """
     str_instanceID = str(instanceID)
     return """
 #!/bin/bash
@@ -35,6 +39,12 @@ EOF
 """
 
 def ssh_connect_with_retry(ssh, ip_address, retries):
+    """
+    This function connects via ssh on the instance.
+    ssh : the id of the instance
+    ip_address : the ip addres sof the instance
+    retries : the number of tries before it fails.
+    """
     if retries > 3:
         return False
     privkey = paramiko.RSAKey.from_private_key_file(
@@ -53,6 +63,9 @@ def ssh_connect_with_retry(ssh, ip_address, retries):
         ssh_connect_with_retry(ssh, ip_address, retries)
 
 def get_id_ips():
+    """
+    This function ...
+    """
     ec2_client = boto3.client("ec2", region_name=AWS_REGION)
     reservations = ec2_client.describe_instances(Filters=[
         {
@@ -74,7 +87,21 @@ def get_id_ips():
     print("\n")
     return ids
 
+def start_scripts(instanceID):
+    """
+    This function starts the scripts on the selected instance.
+    instanceID : the id of the instance
+    """
+    return """
+#!/bin/bash
+sh start.sh
+EOF
+"""
+
 def deploy_hadoop(id_ip, instance_nb):
+    """
+    This function ...
+    """
     ip_address = id_ip[1]
     print(ip_address)
     ssh = paramiko.SSHClient()
@@ -85,7 +112,7 @@ def deploy_hadoop(id_ip, instance_nb):
     log_file = open("logfile.log", "w")
     print('env setup done \n stdout:', stdout.read(), file=log_file)
     log_file.close()
-    print('Deployment done for instance number ' + str(instance_nb) + '\n')
+    print('Sending files... \n')
     # Send the config.sh file to the instance
     scp = SCPClient(ssh.get_transport())
     scp.put(
@@ -103,9 +130,22 @@ def deploy_hadoop(id_ip, instance_nb):
         remote_path=DESTINATION_PATH,
         recursive=False
     )
+    print('Deployment done for instance number ' + str(instance_nb) + '\n')
+    
+    # Running the script start.sh on the VM
+    stdin, stdout, stderr = ssh.exec_command(start_scripts(id_ip[0]))
+    old_stdout = sys.stdout
+    #log_file = open("logfile.log", "w")
+    print('Script done.', stdout.read())#, file=log_file)
+    #log_file.close()
+    print('Retrieving results file')
+    scp.get('/home/ubuntu/results.tar.gz', 'results/')
     ssh.close()
 
 def deploy_app():
+    """
+    This function deploys the applications, scripts on the instance.
+    """
     running = False
     while (not running):
         try:

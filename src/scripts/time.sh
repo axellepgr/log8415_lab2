@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# This script runs WordCount program on Hadoop 3 times on all datasets and measures the execution time
+
+FILES="input/*.txt"
+
+export PATH=$PATH:/usr/local/hadoop/bin/
 hdfs dfs -rm -r output/
 rm -r results/
 mkdir results
@@ -19,4 +26,7 @@ do
         done
         rm result_$file
 done
+
+tar -czvf results.tar.gz results
+mv results.tar.gz ~/
 echo "Files processed. "

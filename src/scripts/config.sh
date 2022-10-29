@@ -23,6 +23,7 @@ mv ~/experiment_files.txt /usr/local/hadoop/sbin
 mv ~/WordCount.java /usr/local/hadoop/sbin
 mv ~/FriendRecommendation.java /usr/local/hadoop/sbin
 mv ~/TP2-dataset.zip /usr/local/hadoop/sbin
+mv ~/pyspark_wordcount.py /usr/local/hadoop/sbin
 
 # Retrieving files and running hadoop 
 (cd /usr/local/hadoop/sbin/ ; bash get_files.sh)
