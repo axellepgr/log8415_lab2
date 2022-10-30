@@ -26,28 +26,28 @@ public class FriendRecommendation {
             //This section is the processing of one line 
             //In the format: userId friendId1, firendId2, friendsId3 ...
             String line[] = value.toString().split("\t");
-            Long fromUser = Long.parseLong(line[0]);
+            Long curUser = Long.parseLong(line[0]);
             //list of first degree friends of the user
-            List<Long> toUsers = new ArrayList<Long>();
-
-            if (line.length == 2) {
+            List<Long> friends = new ArrayList<Long>();
+            
+            if (line.length > 1 ) {
                 StringTokenizer tokenizer = new StringTokenizer(line[1], ",");
                 //go throw all the 1st degree friends
                 while (tokenizer.hasMoreTokens()) {
-                    Long toUser = Long.parseLong(tokenizer.nextToken());
-                    toUsers.add(toUser);
+                    Long friendDeg1 = Long.parseLong(tokenizer.nextToken());
+                    friends.add(friendDeg1);
                     //add the a relationship between the user and his first degree friend
                     //by witing it to the contex by adding a -1 means they are first degree friends
                     //so that this relationship will not be taken into consideration when chosing mutual friends
-                    context.write(new LongWritable(fromUser), new MutualFriendsWritable(toUser, -1L));
+                    context.write(new LongWritable(curUser), new MutualFriendsWritable(friendDeg1, -1));
                 }
                 //For all the friends
                 //Create a new pair (friendId1, friendId2) since they are mutual 
                 //friends through the current user that is being processed aka fromUser
-                for (int i = 0; i < toUsers.size(); i++) {
-                    for (int j = i + 1; j < toUsers.size(); j++) {
-                        context.write(new LongWritable(toUsers.get(i)), new MutualFriendsWritable((toUsers.get(j)), fromUser));
-                        context.write(new LongWritable(toUsers.get(j)), new MutualFriendsWritable((toUsers.get(i)), fromUser));
+                for (int i = 0; i < friends.size(); i++) {
+                    for (int j = i + 1; j < friends.size(); j++) {
+                        context.write(new LongWritable(friends.get(i)), new MutualFriendsWritable((friends.get(j)), 1));
+                        context.write(new LongWritable(friends.get(j)), new MutualFriendsWritable((friends.get(i)), 1));
                     }
                 }
             }
@@ -71,102 +71,99 @@ public class FriendRecommendation {
             // for each recommanded friend hol a list of the mutal friends
             //Our goal is to pick the second degree friend with the most mutual friends
             //final is important because the same list is used by all the workers
-            final java.util.Map<Long, List<Long>> mutualFriends = new HashMap<Long, List<Long>>();
+            final java.util.Map<Long, Integer> mutualFriends = new HashMap<Long, Integer>();
             //All the writable that share a key
             for (MutualFriendsWritable val : values) {
                 final Long toUser = val.user;
-                final Long mutualFriend = val.mutualFriend;
+                final Integer mutualFriend = val.mutualFriend;
 
                 if (mutualFriends.containsKey(toUser)) {
                     if (mutualFriend == -1) {
                         //we nullify the list of common friends if they are already friends
-                        mutualFriends.put(toUser, null);
-                    } else if (mutualFriends.get(toUser) != null) { //if it is null we don't overide
+                        mutualFriends.put(toUser, -1);
+                    } else if (mutualFriends.get(toUser) != -1) { //if it is null we don't overide
                         //we append the new recommendation if the they are not friends
-                        mutualFriends.get(toUser).add(mutualFriend);
+                        Integer count = mutualFriends.get(toUser);
+                        mutualFriends.put(toUser, (count + 1));
                     }
                 } else { //if the hash map does not contain the key to that user we add him
                     //we follow the same logic as above
                     if (mutualFriend != -1) {
-                        mutualFriends.put(toUser, new ArrayList<Long>() {
-                            {
-                                add(mutualFriend);
-                            }
-                        });
+                        mutualFriends.put(toUser, 1);
                     } else {
-                        mutualFriends.put(toUser, null);
+                        mutualFriends.put(toUser, -1);
                     }
                 }
             }
 
             //sorting the friends recommandation based on the number of friends
-            SortedMap<Long, List<Long>> sortedMutualFriends = new TreeMap<Long, List<Long>>(new Comparator<Long>() {
+            SortedMap<Long, Integer> sortedMutualFriends = new TreeMap<Long, Integer>(new Comparator<Long>() {
                 public int compare(Long k1, Long k2) {
-                    Integer nbrFriends1 = mutualFriends.get(k1).size();
-                    Integer nbrFriends2 = mutualFriends.get(k2).size();
+                    Integer nbrFriends1 = mutualFriends.get(k1);
+                    Integer nbrFriends2 = mutualFriends.get(k2);
                     Integer diff = nbrFriends2 - nbrFriends1;
                     //if it has less number of friends it goes lower in the tree
-                    if (diff < 0){
-                        return -1;
-                    }
                     //if they have the same number of friends return in ascending order
                     if (diff == 0 && k1 < k2){
+                        return -1;
+                    }
+                    else if (diff < 0){
                         return -1;
                     }
                     return 1;
                 }
             });
 
-            for (java.util.Map.Entry<Long, List<Long>> entry : mutualFriends.entrySet()) {
-                if (entry.getValue() != null) {
+            for (java.util.Map.Entry<Long, Integer> entry : mutualFriends.entrySet()) {
+                if (entry.getValue() != -1) {
                     sortedMutualFriends.put(entry.getKey(), entry.getValue());
                 }
             }
 
             int i = 0;
-            String output = "";
-            for (java.util.Map.Entry<Long, List<Long>> entry : sortedMutualFriends.entrySet()) {
-                if (i == 0) {
-                    output = entry.getKey().toString();
+            String recommandations = "";
+            for (java.util.Map.Entry<Long, Integer> entry : sortedMutualFriends.entrySet()) {
+                i++;
+                if (i == 1) {
+                    recommandations = entry.getKey().toString();
                 } else {
-                    output += "," + entry.getKey().toString();
+                    recommandations += "," + entry.getKey().toString();
                 }
-                if (i == 9){
+                if (i == 10){
                     // we only want the 10 most 
                     break;
                 }
-                ++i;
             }
             //is the current user that is being parsed
             //will write a tab directly
             //output is the string of mutual friends separated by a comma
-            context.write(key, new Text(output));
+            context.write(key, new Text(recommandations));
         }
     }
 
       static public class MutualFriendsWritable implements Writable {
         public Long user;
-        public Long mutualFriend;
+        public Integer mutualFriend;
 
         //Creats a new MutualFriendsWritable objects
         //The user id and the list of mutual friends as attributes
-        public MutualFriendsWritable(Long user, Long mutualFriend) {
+        public MutualFriendsWritable(Long user, Integer mutualFriend) {
             this.user = user;
             this.mutualFriend = mutualFriend;
         }
         //-1 will mean no relationship
         public MutualFriendsWritable() {
-            this(-1L, -1L);
+            this(-1L, -1);
         }
 
         public void write(DataOutput out) throws IOException {
             out.writeLong(user);
-            out.writeLong(mutualFriend);
+            out.writeInt(mutualFriend);
         }
 
         public void readFields(DataInput in) throws IOException {
             user = in.readLong();
-            mutualFriend = in.readLong();
+            mutualFriend = in.readInt();
         }
     }
 

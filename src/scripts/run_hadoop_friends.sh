@@ -1,4 +1,4 @@
-# This script ...
+# This script runs hadoop Friends recommendation on selected file
 
 sudo apt-get install unzip
 unzip TP2-dataset.zip
