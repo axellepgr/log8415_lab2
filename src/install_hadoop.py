@@ -133,6 +133,7 @@ def deploy_hadoop(id_ip, instance_nb):
     print('Deployment done for instance number ' + str(instance_nb) + '\n')
     
     # Running the script start.sh on the VM
+    print('Running scripts... \n')
     stdin, stdout, stderr = ssh.exec_command(start_scripts(id_ip[0]))
     old_stdout = sys.stdout
     #log_file = open("logfile.log", "w")

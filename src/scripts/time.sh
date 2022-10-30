@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script runs WordCount program on Hadoop 3 times on all datasets and measures the execution time
+# This script runs WordCount program on Hadoop and Linux 3 times on all datasets and measures the execution time
 
 FILES="input/*.txt"
 
@@ -23,6 +23,7 @@ do
                 # LINUX
                 { time ./wordcount_linux.sh input/$file ; } &>> result_$file
                 tail -n 3 result_$file >> results/linux/r_$file
+                # SPARK
         done
         rm result_$file
 done
