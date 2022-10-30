@@ -6,11 +6,6 @@ export PATH=$PATH:/usr/local/hadoop/bin/
 hdfs dfs -copyFromLocal soc-LiveJournal1Adj.txt input
 hadoop com.sun.tools.javac.Main FriendRecommendation.java
 jar cf wc.jar FriendRecommendation*.class
-echo "\n Files available : \n"
-hadoop fs -ls input/
-echo "\nPlease select file : "
-read file
-hadoop jar wc.jar FriendRecommendation input/$file output
+hadoop jar wc.jar FriendRecommendation input/soc-LiveJournal1Adj.txt output
 hadoop fs -cat output/part-r-00000
-mkdir results
-cp output/part-r-00000 results/"result_friends_$file"
+cp output/part-r-00000 results/"result_friends"
