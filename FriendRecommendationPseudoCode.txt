@@ -1,0 +1,40 @@
+
+
+function map(key, line, context):
+    line = line.split("\t")
+    user = line[0]
+    userFriends = line[1].split(",")
+
+    for(friend: userFriends):
+        context.add(user, (userFriends, -1))
+
+    count = 0   
+    for(friend1: userFriends):
+        count ++
+        for(friend2: userFriend[count:])
+            context.add(friend1, (friend2, 1))
+            context.add(friend2, (friend1, 1))
+
+
+function reduce(userKey, mutualFriendsTuples):
+    allFriendRecommendations<friendKey, numberOfMutual> = {}
+
+    for ((friendKey, degree): mutualFriendsTuples):
+        if (mutualFriendsTuples.degree == -1)
+            allFriendRecommendations.put(key, -1)
+        else:
+            //count the number of times:
+            //this friend has a mutual friend with this user
+            allFriendRecommendations.get(friendKey) + 1
+
+    fonction sort():
+        //Sorts in decreasing order all allFriendRecommendations 
+        //based on the number of mutual frinds
+        //Eliminats the entries with -1 as number of mutual friends
+
+    allFriendRecommendations.sort()[10]
+
+    out = ""
+    for (friend: allFriendRecommendations: friend):
+        out += "," + friend
+
