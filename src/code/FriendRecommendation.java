@@ -27,23 +27,24 @@ public class FriendRecommendation {
             //In the format: userId friendId1, firendId2, friendsId3 ...
             String line[] = value.toString().split("\t");
             Long curUser = Long.parseLong(line[0]);
-            //list of first degree friends of the user
+            //List of first degree friends of the user
             List<Long> friends = new ArrayList<Long>();
             
             if (line.length > 1 ) {
                 StringTokenizer tokenizer = new StringTokenizer(line[1], ",");
-                //go throw all the 1st degree friends
+
+                //Go through all the 1st degree friends
                 while (tokenizer.hasMoreTokens()) {
                     Long friendDeg1 = Long.parseLong(tokenizer.nextToken());
                     friends.add(friendDeg1);
-                    //add the a relationship between the user and his first degree friend
-                    //by witing it to the contex by adding a -1 means they are first degree friends
-                    //so that this relationship will not be taken into consideration when chosing mutual friends
+                    //Add the a relationship between the user and his first degree friend
+                    //By witing it to the contex by adding a -1 means they are first degree friends
+                    //So that this relationship will not be taken into consideration when chosing mutual friends
                     context.write(new LongWritable(curUser), new MutualFriendsWritable(friendDeg1, -1));
                 }
+
                 //For all the friends
-                //Create a new pair (friendId1, friendId2) since they are mutual 
-                //friends through the current user that is being processed aka fromUser
+                //Create a new pair (friendId1, (friendId2, 1)) 
                 for (int i = 0; i < friends.size(); i++) {
                     for (int j = i + 1; j < friends.size(); j++) {
                         context.write(new LongWritable(friends.get(i)), new MutualFriendsWritable((friends.get(j)), 1));
@@ -55,39 +56,37 @@ public class FriendRecommendation {
     }
 
     //In the map phase we should have something like this:
-    //u1 u2, u3
-    //1st aka we don't really care
-    //(key, val) - the key is just a Long and the value is the MutualFriendWritable
-    //(u1, (u2, -1L))
-    //(u2, (u3, -1L))
+    //given --> u1 u2, u3
+    //1st deg
+    //(u1, (u2, -1))
+    //(u2, (u3, -1))
     //2nd deg aka possible recommendation
-    //(u2, (u3, u1))
-    //(u3, (u2, u1))
+    //(u2, (u3, 1))
+    //(u3, (u2, 1))
 
     public static class Reduce extends Reducer<LongWritable, MutualFriendsWritable, LongWritable, Text> {
         public void reduce(LongWritable key, Iterable<MutualFriendsWritable> values, Context context)
                 throws IOException, InterruptedException {
 
-            // for each recommanded friend hol a list of the mutal friends
-            //Our goal is to pick the second degree friend with the most mutual friends
-            //final is important because the same list is used by all the workers
+            //For each recommanded friend hold a list of the mutal friends
+            //Our goal is to pick the second degree friends with the most mutual friends
             final java.util.Map<Long, Integer> mutualFriends = new HashMap<Long, Integer>();
-            //All the writable that share a key
+            //All the writables that share a key
             for (MutualFriendsWritable val : values) {
                 final Long toUser = val.user;
                 final Integer mutualFriend = val.mutualFriend;
 
                 if (mutualFriends.containsKey(toUser)) {
                     if (mutualFriend == -1) {
-                        //we nullify the list of common friends if they are already friends
+                        //We set the count to -1 because they are already friends
                         mutualFriends.put(toUser, -1);
-                    } else if (mutualFriends.get(toUser) != -1) { //if it is null we don't overide
-                        //we append the new recommendation if the they are not friends
+                    } else if (mutualFriends.get(toUser) != -1) { //if it is -1 we don't overide
+                        //We append the new recommendation if they are not friends
                         Integer count = mutualFriends.get(toUser);
                         mutualFriends.put(toUser, (count + 1));
                     }
-                } else { //if the hash map does not contain the key to that user we add him
-                    //we follow the same logic as above
+                } else { //If the hash map does not contain the key to that user we add him
+                    //We follow the same logic as above
                     if (mutualFriend != -1) {
                         mutualFriends.put(toUser, 1);
                     } else {
@@ -96,14 +95,14 @@ public class FriendRecommendation {
                 }
             }
 
-            //sorting the friends recommandation based on the number of friends
+            //Sorting the friends recommandation based on the number of mutual friends
             SortedMap<Long, Integer> sortedMutualFriends = new TreeMap<Long, Integer>(new Comparator<Long>() {
                 public int compare(Long k1, Long k2) {
                     Integer nbrFriends1 = mutualFriends.get(k1);
                     Integer nbrFriends2 = mutualFriends.get(k2);
                     Integer diff = nbrFriends2 - nbrFriends1;
-                    //if it has less number of friends it goes lower in the tree
-                    //if they have the same number of friends return in ascending order
+                    //If it has less number of friends it goes lower in the tree
+                    //If they have the same number of friends return in ascending order of the id
                     if (diff == 0 && k1 < k2){
                         return -1;
                     }
@@ -130,13 +129,10 @@ public class FriendRecommendation {
                     recommandations += "," + entry.getKey().toString();
                 }
                 if (i == 10){
-                    // we only want the 10 most 
+                    //We only want the 10 first 
                     break;
                 }
             }
-            //is the current user that is being parsed
-            //will write a tab directly
-            //output is the string of mutual friends separated by a comma
             context.write(key, new Text(recommandations));
         }
     }
