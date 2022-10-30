@@ -4,7 +4,6 @@ sudo apt-get install unzip
 unzip TP2-dataset.zip
 export PATH=$PATH:/usr/local/hadoop/bin/
 hdfs dfs -copyFromLocal soc-LiveJournal1Adj.txt input
-# mv ~/FriendRecommendation.java /usr/local/hadoop/sbin
 hadoop com.sun.tools.javac.Main FriendRecommendation.java
 jar cf wc.jar FriendRecommendation*.class
 echo "\n Files available : \n"
