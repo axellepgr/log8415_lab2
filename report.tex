@@ -17,7 +17,7 @@
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 
 \title{Polytechnique Montreal \\
-LOG8415: Lab 2\\
+LOG8415E: Lab 2\\
 Mapreduce with Hadoop on AWS}
 
 \author{Line Ghanem - 1728134\\Zineddine Aliche - 1949905\\
@@ -27,7 +27,7 @@ Mohammed Ramzi Bouthiba - 2065386\\Axelle Pagnier - 2164162}
 \maketitle
 
 \begin{abstract}
-In this assignment, we use an EC2 instance (M4.large type and under Linux Ubuntu operating system) of AWS to experiment with the MapReduce paradigm using two open source distributed computing frameworks: Hadoop and Spark. The assignment is composed of three parts, the first is for setting up the environments of Hadoop and Spark, the second is for the application of a text wordcount with Hadoop, spark and Linux, the last part concerns the application of experiments of the first two parts on a real problem which is the social network friendship recommendation.
+
 \end{abstract}
 
 \section{Setting Up the Environment}
@@ -37,11 +37,42 @@ In this assignment, we use an EC2 instance (M4.large type and under Linux Ubuntu
 \subsection{Hadoop vs. Linux}
 
  
-\subsection{Hadoop vs. Spark}
-
+\subsection{Hadoop vs. Linux}
+\section{Hadoop vs. Spark}
 
 
 \section{Social network friendship recommendation}
+
+
+\paragraph{}
+In this section we will describe a solution to the following problem:
+give 10 friends recommendation to each user based on their mutual friends.
+For each user we will return the 10 recommendations with home the user has the biggest number of mutual friends. Since we are using Hadoop MapReduce to solve the problem we have divided our implementation in two phases Map and Reduce using the java \textbf{org.apache.hadoop} packages.
+
+The Map section will first map each friend to his first degree friends as follows: \textbf{(UserKey, (Friend, -1))}.
+Then, for each friend in the friend list of the user we will create a second degree relationship as follows: \textbf{(Friend1, (Friend2, 1))} and \textbf{(Friend2, (Friend1, 1))}. Note a relationship with 1 means they are second degree friends and a relationship with -1 means they are first degree friends. Note a relationship with 1 means they are second degree friends and a relationship with -1 means they are first degree friends. Each of the entries create in the map phase are added to the context (Figure \ref{fig:map}).
+
+\begin{figure}[h]
+  \includegraphics[scale=0.65]{img/map.png}
+  \caption{Pseudo code of the mapper function.}
+  \label{fig:map}
+\end{figure}
+
+In the reduce phase, for each UserKey, we count the number of mutual friends that each user has with the same second degree friend. To do this we will use the context entries created in the map phase. For example, given user A and B if the relationship (A, (D, 1)) is counted 2 times the number of mutual friends between A and D is 2. However, if the following entry existed: (A, (B,-1)); A and B are first degree friends and the count is set to -1 since first degree friends will not be recommended to each other (Figure \ref{fig:reduce}).
+
+\begin{figure}[h]
+  \includegraphics[scale=0.65]{img/reduce.png}
+  \caption{Pseudo code of the reducer function.}
+  \label{fig:reduce}
+\end{figure}
+
+A short example of the logic is seen in Figure \ref{fig:mapreduce}.
+
+\begin{figure}[h]
+  \includegraphics[width=\linewidth]{img/mapreduce.png}
+  \caption{Simplified example of the MapReduce solution for the networking problem.}
+  \label{fig:mapreduce}
+\end{figure}
 
 \section{Conclusion}
 
