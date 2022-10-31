@@ -16,6 +16,9 @@ ip = json_object["ip"]
 
 
 def spark_setup_commands():
+    """
+    This function sets up the environment for spark.
+    """
     return """
 #!/bin/bash
 sudo apt install curl mlocate git scala -y
@@ -35,6 +38,12 @@ EOF
 
 
 def ssh_connect_with_retry(ssh, ip_address, retries):
+    """
+    This function connects via ssh on the instance.
+    ssh : ssh
+    ip_address : the ip address of the instance
+    retries : the number of tries before it fails.
+    """
     if retries > 3:
         return False
     privkey = paramiko.RSAKey.from_private_key_file(
@@ -54,7 +63,10 @@ def ssh_connect_with_retry(ssh, ip_address, retries):
 
 
 def install_spark(ip):
-
+    """
+    This function install spark on the selected instance.
+    ip : the ip of the instance
+    """
     # Setting Up SSH
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())

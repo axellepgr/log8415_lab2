@@ -1,6 +1,8 @@
 import paramiko
 import json
 import time
+import scp
+from scp import SCPClient
 
 with open('collected_data.json', 'r') as openfile:
     # Reading from json file
@@ -11,6 +13,12 @@ ip = json_object["ip"]
 
 
 def ssh_connect_with_retry(ssh, ip_address, retries):
+    """
+    This function connects via ssh on the instance.
+    ssh : ssh
+    ip_address : the ip address of the instance
+    retries : the number of tries before it fails.
+    """
     if retries > 3:
         return False
     privkey = paramiko.RSAKey.from_private_key_file(
@@ -30,7 +38,10 @@ def ssh_connect_with_retry(ssh, ip_address, retries):
 
 
 def launch_experiments(ip):
-
+    """
+    This function runs the scripts on the instance.
+    ip : the ip of the instances
+    """
     # Setting Up SSH
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -54,7 +65,15 @@ def launch_experiments(ip):
 
     ssh.exec_command("bash run_hadoop_friends.sh")
     print("hadoop job friends recommendations done.")
+    
+    print('Retrieving results files')
+    scp = SCPClient(ssh.get_transport())
+    scp.get('/home/ubuntu/pg4300_linux_time.txt', 'results/')
+    scp.get('/home/ubuntu/pg4300_hadoop_time.txt', 'results/')
+    scp.get('/home/ubuntu/experiment_spark_time.txt', 'results/')
+    scp.get('/home/ubuntu/times.txt', 'results/')
 
+    scp.close()
     ssh.close()
 
 
