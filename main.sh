@@ -9,6 +9,7 @@ then
     pip3 install requests==2.22.0
     pip3 install matplotlib==3.0.3
     pip3 install scpclient
+    pip3 install statistics
 
     echo "Clonning the git repo to proceed with the deployment"
     git clone https://github.com/axellepgr/log8415_lab2.git
@@ -27,6 +28,7 @@ else
     pip install paramiko==2.11.0
     pip install requests==2.22.0
     pip install scpclient
+    pip install statistics
 
     echo "Clonning the git repo to proceed with the deployment"
     git clone https://github.com/axellepgr/log8415_lab2.git

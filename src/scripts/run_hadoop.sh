@@ -1,3 +1,5 @@
+# This script runs hadoop WordCount on selected file
+
 export PATH=$PATH:/usr/local/hadoop/bin/
 hadoop com.sun.tools.javac.Main WordCount.java
 jar cf wc.jar WordCount*.class
@@ -9,4 +11,5 @@ hdfs dfs -rm -r output/
 hadoop jar wc.jar WordCount input/$file output
 hadoop fs -cat output/part-r-00000
 mkdir results
-cp output/part-r-00000 results/"result_$file"
+mkdir results/hadoop
+cp output/part-r-00000 results/hadoop/"result_$file"
