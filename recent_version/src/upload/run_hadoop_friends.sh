@@ -9,4 +9,4 @@ jar cf fr.jar FriendRecommendation*.class
 hadoop jar fr.jar FriendRecommendation input/soc-LiveJournal1Adj.txt output
 hadoop fs -cat output/part-r-00000
 mkdir results
-cp output/part-r-00000 results/"result_friends"
+cp output/part-r-00000 results/"result_friends.txt"

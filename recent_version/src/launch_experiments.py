@@ -1,3 +1,4 @@
+from os import system
 import paramiko
 import json
 import time
@@ -48,30 +49,50 @@ def launch_experiments(ip):
     ssh_connect_with_retry(ssh, ip, 0)
     print("Connected through SSH!")
 
-    ssh.exec_command("bash pg4300_hadoop.sh")
+    stdin, stdout, stderr = ssh.exec_command("bash pg4300_hadoop.sh")
+    log_file = open("logfile.log", "w")
+    print('stdout:', stdout.read(), file=log_file)
+    log_file.close()
     print("hadoop pg4300 done.")
 
-    ssh.exec_command("bash pg4300_linux.sh")
+    stdin, stdout, stderr = ssh.exec_command("bash pg4300_linux.sh")
+    log_file = open("logfile.log", "w")
+    print('stdout:', stdout.read(), file=log_file)
+    log_file.close()
     print("linux pg4300 done.")
 
-    ssh.exec_command("bash experiment_spark.sh")
+    stdin, stdout, stderr = ssh.exec_command("bash experiment_spark.sh")
+    log_file = open("logfile.log", "w")
+    print('stdout:', stdout.read(), file=log_file)
+    log_file.close()
     print("spark job on the 9 files done.")
 
-    ssh.exec_command("bash experiment_hadoop.sh")
+    stdin, stdout, stderr = ssh.exec_command("bash experiment_hadoop.sh")
+    log_file = open("logfile.log", "w")
+    print('stdout:', stdout.read(), file=log_file)
+    log_file.close()
     print("hadoop job on the 9 files done.")
 
-    ssh.exec_command("bash generate_times_file.sh")
+    stdin, stdout, stderr = ssh.exec_command("bash generate_times_file.sh")
+    log_file = open("logfile.log", "w")
+    print('stdout:', stdout.read(), file=log_file)
+    log_file.close()
     print("\"~/times.txt\": a file that contains the running time of hadoop for each file was created")
 
-    ssh.exec_command("bash run_hadoop_friends.sh")
+    stdin, stdout, stderr = ssh.exec_command("bash run_hadoop_friends.sh")
+    log_file = open("logfile.log", "w")
+    print('stdout:', stdout.read(), file=log_file)
+    log_file.close()
     print("hadoop job friends recommendations done.")
-    
+        
     print('Retrieving results files')
     scp = SCPClient(ssh.get_transport())
     scp.get('/home/ubuntu/pg4300_linux_time.txt', 'results/')
     scp.get('/home/ubuntu/pg4300_hadoop_time.txt', 'results/')
     scp.get('/home/ubuntu/experiment_spark_time.txt', 'results/')
     scp.get('/home/ubuntu/times.txt', 'results/')
+    scp.get('/home/ubuntu/results/result_friends.txt', 'results/')
+    print('Results files are in folder /results')
 
     scp.close()
     ssh.close()
