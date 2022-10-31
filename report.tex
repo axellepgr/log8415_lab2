@@ -69,15 +69,15 @@ For this part, we compare the execution time of Hadoop and Spark on a dataset th
   \label{fig:hadoop vs spark}
 \end{figure}
 It can be seen from figure 3 that the execution time is 100 times greater for Hadoop compared to Spark except for file 1(https://tinyurl.com/4vxdw3pa) which is approximately 50 times greater.\\
-The main reason for this difference is that Spark processes data in-memory while hadoop Mapreduce returns to disk after each step of map or reduce.Through this experience it was confirmed that Spark performs well as Hadoop.
+The main reason for this difference is that Spark processes data in-memory while Hadoop Mapreduce returns to disk after each step of map or reduce.Through this experience it was confirmed that Spark performs well as Hadoop.
 \section{Social network friendship recommendation}
 In this section we will describe a solution to the following problem:
 give 10 friends recommendation to each user based on their mutual friends.
-For each user we will return the 10 recommendations with home the user has the biggest number of mutual friends. Since we are using Hadoop MapReduce to solve the problem we have divided our implementation in two phases Map and Reduce using the java \textbf{org.apache.hadoop} packages.
+For each user we will return the 10 recommendations with who the user has the biggest number of mutual friends. Since we are using Hadoop MapReduce to solve the problem we have divided our implementation in two phases Map and Reduce using the java \textbf{org.apache.hadoop} packages. An important concept in Hadoop MapReduce is the context. The context allow the mapper and the reducer to communicate with the rest of the system and most importantly it stores values across map and reduce jobs. 
 
 
 The Map section will first map each friend to his first degree friends as follows: \textbf{(UserKey, (Friend, -1))}.
-Then, for each friend in the friend list of the user we will create a second degree relationship as follows: \textbf{(Friend1, (Friend2, 1))} and \textbf{(Friend2, (Friend1, 1))}. Note a relationship with 1 means they are second degree friends and a relationship with -1 means they are first degree friends. Note a relationship with 1 means they are second degree friends and a relationship with -1 means they are first degree friends. Each of the entries create in the map phase are added to the context (Figure \ref{fig:map}).
+Then, for each friend in the friend list of the user we will create a second degree relationship as follows: \textbf{(Friend1, (Friend2, 1))} and \textbf{(Friend2, (Friend1, 1))}. Note a relationship with 1 means they are second degree friends and a relationship with -1 means they are first degree friends. Each of the entries created in the map phase are added to the context (Figure \ref{fig:map}).
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.65]{map.png}
