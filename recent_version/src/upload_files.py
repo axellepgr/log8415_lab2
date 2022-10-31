@@ -20,6 +20,12 @@ ip = json_object["ip"]
 
 
 def ssh_connect_with_retry(ssh, ip_address, retries):
+    """
+    This function connects via ssh on the instance.
+    ssh : the id of the instance
+    ip_address : the ip addres sof the instance
+    retries : the number of tries before it fails.
+    """
     if retries > 3:
         return False
     privkey = paramiko.RSAKey.from_private_key_file(
@@ -39,7 +45,10 @@ def ssh_connect_with_retry(ssh, ip_address, retries):
 
 
 def upload_files(ip):
-
+    """
+    This function sets up the environment and starts the scripts on the selected instance.
+    ip : the ip of the instance
+    """
     # Setting Up SSH
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
