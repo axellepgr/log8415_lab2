@@ -1,7 +1,6 @@
 import paramiko
 import json
 import time
-import sys
 
 with open('collected_data.json', 'r') as openfile:
     # Reading from json file
@@ -52,6 +51,10 @@ def launch_experiments(ip):
 
     ssh.exec_command("bash generate_times_file.sh")
     print("\"~/times.txt\": a file that contains the running time of hadoop for each file was created")
+
+    ssh.exec_command("bash run_hadoop_friends.sh")
+    print("hadoop job friends recommendations done.")
+
     ssh.close()
 
 

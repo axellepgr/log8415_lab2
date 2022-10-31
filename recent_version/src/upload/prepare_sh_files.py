@@ -14,3 +14,6 @@ os.system("chmod +x experiment_spark.sh")
 
 os.system("sed -i -e 's/\\r$//' generate_times_file.sh")
 os.system("chmod +x generate_times_file.sh")
+
+os.system("sed -i -e 's/\\r$//' run_hadoop_friends.sh")
+os.system("chmod +x run_hadoop_friends.sh")
