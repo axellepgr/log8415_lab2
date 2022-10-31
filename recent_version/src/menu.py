@@ -1,0 +1,76 @@
+import boto3
+import sys
+import json
+
+with open('collected_data.json', 'r') as openfile:
+    # Reading from json file
+    json_object = json.load(openfile)
+    openfile.close()
+
+id = json_object["id"]
+
+
+def delete_sg():
+    """
+    This function delete the security group.
+    """
+    boto3.client('ec2').delete_security_group(
+        GroupName='LAB2',
+    )
+    print('Security Group LAB2 deleted.')
+
+
+def terminate_instance(id_list):
+    """
+    This function terminates the specified instances.
+    id_list : the IDs of the instances.
+    """
+    for instanceID in id_list:
+        boto3.resource('ec2').instances.filter(
+            InstanceIds=[instanceID]).terminate()
+        print('Instance ' + str(instanceID) + ' is shutting down.')
+
+
+def wait_for_instance_terminated(ids):
+    """
+    This function waits until the instances are in state "terminated".
+    ids : the IDs of the instances.
+    """
+    print('Waiting for the instances to terminate...')
+    waiter = boto3.client('ec2').get_waiter('instance_terminated')
+    waiter.wait(
+        InstanceIds=ids
+    )
+    print('All instances terminated.')
+
+
+def shutdown_system(instances_ids):
+    """
+    This function shutdows the system.
+    ids : the IDs of the instances that needs to be shut down.
+    """
+    print('Shutting down system...')
+    terminate_instance(instances_ids)
+    wait_for_instance_terminated(instances_ids)
+    delete_sg()
+    print('System shutdown.')
+
+
+id_list = [id]
+while True:
+    print('\nMenu :')
+    print('    press \'i\' to get informations. ')
+    print('    press \'q\' to quit. ')
+    print('    press \'s\' to shutdown everything. ')
+    line = input('> ')
+    if (line == 'i'):
+        print('\nRunning instances :')
+        id_list = [id]
+    elif (line == 'q'):
+        sys.exit()
+    elif (line == 's'):
+        shutdown_system(id_list)
+    elif (line == ''):
+        continue
+    else:
+        print('Unknown commad.')
