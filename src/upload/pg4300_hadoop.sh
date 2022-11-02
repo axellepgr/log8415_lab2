@@ -1,4 +1,5 @@
 #! /bin/bash
+# this file runs the Hadoop experiment on pg4300.txt and creates a result file : pg4300_hadoop_time.txt
 export PATH=$PATH:/usr/local/hadoop/bin
 hdfs dfs -mkdir input
 curl -O https://www.gutenberg.org/cache/epub/4300/pg4300.txt

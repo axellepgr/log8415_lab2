@@ -1,3 +1,4 @@
+# this file configures the environment
 export PATH=$PATH:/usr/local/spark/bin
 export SPARK_LOCAL_IP=localhost
 export PYSPARK_PYTHON=/usr/bin/python3

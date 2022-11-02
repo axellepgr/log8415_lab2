@@ -1,4 +1,5 @@
 #! /bin/bash
+# this file runs the Hadoop experiment
 export PATH=$PATH:/usr/local/hadoop/bin
 hdfs dfs -mkdir input
 for k in 0 1 2

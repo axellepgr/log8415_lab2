@@ -8,6 +8,11 @@ experiment_files = "./experiment_files.txt"
 
 
 def load_experiment_files(experiment_files):
+    '''
+    This function reads the file line by line.
+    experiment_files : the file to read
+    returns a list of strings.
+    '''
     with open(experiment_files, 'r', encoding='utf-8') as f:
         raw_lines = f.readlines()
     return [x.strip() for x in raw_lines]
@@ -24,6 +29,9 @@ for i in range(len(data)):
 
     average_time = 0
 
+    '''
+    Calculates the average execution time.
+    '''
     for j in range(3):
         start = time.time()
         map_reduce = words.map(lambda word: (

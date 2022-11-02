@@ -1,4 +1,5 @@
 #! /bin/bash
+# this file configures the environment
 cd ~/.ssh
 echo | ssh-keygen -P ''
 cat id_rsa.pub >> authorized_keys

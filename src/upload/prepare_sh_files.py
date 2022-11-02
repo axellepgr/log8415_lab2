@@ -1,5 +1,5 @@
 import os
-
+# Configures the .sh files
 os.system("sed -i -e 's/\\r$//' pg4300_hadoop.sh")
 os.system("chmod +x pg4300_hadoop.sh")
 
