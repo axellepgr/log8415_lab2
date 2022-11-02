@@ -1,5 +1,13 @@
 import boto3
 import sys
+import json
+
+with open('collected_data.json', 'r') as openfile:
+    # Reading from json file
+    json_object = json.load(openfile)
+    openfile.close()
+
+id = json_object["id"]
 
 def get_running_instances():
     """
@@ -31,6 +39,7 @@ def delete_sg():
     )
     print('Security Group LAB2 deleted.')
 
+
 def terminate_instance(id_list):
     """
     This function terminates the specified instances.
@@ -40,7 +49,8 @@ def terminate_instance(id_list):
         boto3.resource('ec2').instances.filter(
             InstanceIds=[instanceID]).terminate()
         print('Instance ' + str(instanceID) + ' is shutting down.')
-        
+
+
 def wait_for_instance_terminated(ids):
     """
     This function waits until the instances are in state "terminated".
@@ -52,7 +62,8 @@ def wait_for_instance_terminated(ids):
         InstanceIds=ids
     )
     print('All instances terminated.')
-    
+
+
 def shutdown_system(instances_ids):
     """
     This function shutdows the system.
@@ -63,9 +74,9 @@ def shutdown_system(instances_ids):
     wait_for_instance_terminated(instances_ids)
     delete_sg()
     print('System shutdown.')
-    
-    
-id_list = get_running_instances()
+
+
+id_list = [id]
 while True:
     print('\nMenu :')
     print('    press \'i\' to get informations. ')
