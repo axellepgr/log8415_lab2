@@ -29,7 +29,7 @@ Mohammed Ramzi Bouthiba - 2065386\\Axelle Pagnier - 2164162}
 \maketitle
 
 \begin{abstract}
-In this assignment, we use an EC2 instance (M4.large type and under Linux Ubuntu operating system) of AWS to experiment with the MapReduce paradigm using two open source distributed computing frameworks: Hadoop and Spark. The assignment is composed of three parts, the first is for setting up the environments of Hadoop and Spark, the second is for the application of a text wordcount with Hadoop, spark and Linux, the last part concerns the application of experiments of the first two parts on a real problem which is the social network friendship recommendation.
+In this assignment, we use an EC2 instance (M4.large type and under Linux Ubuntu operating system) of AWS to experiment with the MapReduce paradigm using two open source distributed computing frameworks: Hadoop and Spark. The assignment is composed of three parts, the first is for setting up the environments of Hadoop and Spark, the second is for the application of a text wordcount with Hadoop, spark and Linux, the last part concerns the application of experiments of the first two parts on a real problem which is the social network friendship recommendation.All the assignment is done in standalone mode.
 \end{abstract}
 
 \section{Setting Up the Environment}
@@ -60,7 +60,7 @@ In this part we compare the performance of hadoop and linux on a wordcount task,
 \noindent The results obtained show that Linux perform this task 58 times faster compared to Hadoop.
 
 \subsection{Hadoop vs. Spark}
-For this part, we compare the execution time of Hadoop and Spark on a dataset that contains 9 text files. We used Python (PySpark) as the programming language for Spark and Java for Hadoop. We ran the program 3 times for each text file and took the average time.Spark runtime result is multiplied by \textbf{10}.It should be noted that we did all the homework in standalone mode. The results are shown in Figure 3.
+For this part, we compare the execution time of Hadoop and Spark on a dataset that contains 9 text files. We used Python (PySpark) as the programming language for Spark and Java for Hadoop. We ran the program 3 times for each text file and took the average time.Spark runtime result is multiplied by \textbf{10}(in order to show it well on the graph). It should be noted that for spark we give the data file directly without going through HDFS. The results are shown in Figure 2.
 
 \begin{figure}[h]
   \centering
@@ -68,7 +68,7 @@ For this part, we compare the execution time of Hadoop and Spark on a dataset th
   \caption{Execution time of Hadoop (1xT) and Spark (10xT).}
   \label{fig:hadoop vs spark}
 \end{figure}
-It can be seen from figure 3 that the execution time is 100 times greater for Hadoop compared to Spark except for file 1(https://tinyurl.com/4vxdw3pa) which is approximately 50 times greater.\\
+It can be seen from figure 2 that the execution time is greater for Hadoop compared to Spark .\\
 The main reason for this difference is that Spark processes data in-memory while Hadoop Mapreduce returns to disk after each step of map or reduce.Through this experience it was confirmed that Spark performs well as Hadoop.
 \section{Social network friendship recommendation}
 In this section we will describe a solution to the following problem:
@@ -106,7 +106,7 @@ A short example of the logic is seen in Figure \ref{fig:mapreduce}.
 \paragraph{Results of networking problem:} (Table below)
 
 \begin{center}
-\begin{tabular}{c|c}
+\begin{tabular}{c|c}[h]
   User & Top 10 recommended friends\\
   \hline\hline
   924  &   439,2409,6995,11860,15416,43748,45881\\
@@ -122,11 +122,13 @@ A short example of the logic is seen in Figure \ref{fig:mapreduce}.
 \end{tabular}
 \end{center}
 \section{Conclusion}
+In this lab, we used Hadoop and Spark to conduct wordcount experiments and the social network friendship recommendation problem. A first experiment was made to compare Hadoop and Linux in a wordcount task, the results obtained show that Linux is very fast compared to Hadoop because Hadoop stores data on multiple sources (HDFS) and processes it in batches via MapReduce.
+A second experiment was conducted to compare the performance of Hadoop and Spark and the result obtained illustrates that Spark is faster than Hadoop and this because Spark RAM instead of reading and writing intermediate data to disks.
+A last experiment is made on a real problem of social network friendship recommendation in order to make a friend suggestion for a user based on the number of mutual friends in common with that user.
 
 
 
-\begin{thebibliography}{9}
  
-\end{thebibliography}
+
 
 \end{document}
