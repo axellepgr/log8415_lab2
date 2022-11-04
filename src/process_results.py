@@ -60,7 +60,7 @@ def read_files(file_hadoop, file_spark):
     
 def plot_graphs(data_hadoop, data_spark):
     '''
-    This function plots the average execution time for both hadoop and sparl
+    This function plots the average execution time for both hadoop and spark
     '''
     x = ['Hadoop', 'Spark']
 
@@ -89,7 +89,6 @@ def plot_graphs(data_hadoop, data_spark):
     # For 1st file
     bar_colors = ['tab:blue', 'tab:orange']
     axis[0, 0].bar(x, y1, color=bar_colors)
-    #plt.ylabel('average time (s)')
     axis[0, 0].set_title("file1")
     
     # For 2nd file
@@ -102,7 +101,6 @@ def plot_graphs(data_hadoop, data_spark):
 
     # For 4th file
     axis[1, 0].bar(x, y4, color=bar_colors)
-    #plt.ylabel('average time (s)')
     axis[1, 0].set_title("file4")
  
     # For 5th file
@@ -115,7 +113,6 @@ def plot_graphs(data_hadoop, data_spark):
 
     # For 7th file
     axis[2, 0].bar(x, y7, color=bar_colors)
-    #plt.ylabel('average time (s)')
     axis[2, 0].set_title("file7")
 
     # For 8th file
