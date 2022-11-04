@@ -74,59 +74,62 @@ def plot_graphs(data_hadoop, data_spark):
     number_of_im = len(mean_real_hadoop)
     # Initialise the subplot function using number of rows and columns
     figure, axis = plt.subplots(3, 3)
+
     
-    y1 = [mean_real_hadoop[0], mean_real_spark[0]]
-    y2 = [mean_real_hadoop[1], mean_real_spark[1]]
-    y3 = [mean_real_hadoop[2], mean_real_spark[2]]
-    y4 = [mean_real_hadoop[3], mean_real_spark[3]]
-    y5 = [mean_real_hadoop[4], mean_real_spark[4]]
-    y6 = [mean_real_hadoop[5], mean_real_spark[5]]
-    y7 = [mean_real_hadoop[6], mean_real_spark[6]]
-    y8 = [mean_real_hadoop[7], mean_real_spark[7]]
-    y9 = [mean_real_hadoop[8], mean_real_spark[8]]
+    y1 = [mean_real_hadoop[0], mean_real_spark[0]*10]
+    y2 = [mean_real_hadoop[1], mean_real_spark[1]*10]
+    y3 = [mean_real_hadoop[2], mean_real_spark[2]*10]
+    y4 = [mean_real_hadoop[3], mean_real_spark[3]*10]
+    y5 = [mean_real_hadoop[4], mean_real_spark[4]*10]
+    y6 = [mean_real_hadoop[5], mean_real_spark[5]*10]
+    y7 = [mean_real_hadoop[6], mean_real_spark[6]*10]
+    y8 = [mean_real_hadoop[7], mean_real_spark[7]*10]
+    y9 = [mean_real_hadoop[8], mean_real_spark[8]*10]
     
     # For 1st file
-    axis[0, 0].bar(x, y1)
-    plt.ylabel('average time (s)')
-    axis[0, 0].set_title("1.txt")
+    bar_colors = ['tab:blue', 'tab:orange']
+    axis[0, 0].bar(x, y1, color=bar_colors)
+    #plt.ylabel('average time (s)')
+    axis[0, 0].set_title("file1")
     
     # For 2nd file
-    axis[0, 1].bar(x, y2)
-    axis[0, 1].set_title("2.txt")
+    axis[0, 1].bar(x, y2, color=bar_colors)
+    axis[0, 1].set_title("file2")
     
     # For 3rd file
-    axis[0, 2].bar(x, y3)
-    axis[0, 2].set_title("3.txt")
+    axis[0, 2].bar(x, y3, color=bar_colors)
+    axis[0, 2].set_title("file3")
 
     # For 4th file
-    axis[1, 0].bar(x, y4)
-    plt.ylabel('average time (s)')
-    axis[1, 0].set_title("4.txt")
+    axis[1, 0].bar(x, y4, color=bar_colors)
+    #plt.ylabel('average time (s)')
+    axis[1, 0].set_title("file4")
  
     # For 5th file
-    axis[1, 1].bar(x, y5)
-    axis[1, 1].set_title("5.txt")
+    axis[1, 1].bar(x, y5, color=bar_colors)
+    axis[1, 1].set_title("file5")
       
     # For 6th file
-    axis[1, 2].bar(x, y6)
-    axis[1, 2].set_title("6.txt")
+    axis[1, 2].bar(x, y6, color=bar_colors)
+    axis[1, 2].set_title("file6")
 
     # For 7th file
-    axis[2, 0].bar(x, y7)
-    plt.ylabel('average time (s)')
-    axis[2, 0].set_title("7.txt")
+    axis[2, 0].bar(x, y7, color=bar_colors)
+    #plt.ylabel('average time (s)')
+    axis[2, 0].set_title("file7")
 
     # For 8th file
-    axis[2, 1].bar(x, y8)
-    axis[2, 1].set_title("8.txt")
+    axis[2, 1].bar(x, y8, color=bar_colors)
+    axis[2, 1].set_title("file8")
 
     # For 9th file
-    axis[2, 2].bar(x, y9)
-    axis[2, 2].set_title("9.txt")
+    axis[2, 2].bar(x, y9, color=bar_colors)
+    axis[2, 2].set_title("file9")
 
     # Combine all the operations and display
     plt.suptitle("Average execution time for the 9 files.")
     plt.savefig(f"results/graphs/spark_hadoop.png")
+    plt.tight_layout()
     plt.show()
     
 

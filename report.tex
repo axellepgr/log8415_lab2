@@ -60,12 +60,12 @@ In this part we compare the performance of hadoop and linux on a wordcount task,
 \noindent The results obtained show that Linux perform this task 58 times faster compared to Hadoop.
 
 \subsection{Hadoop vs. Spark}
-For this part, we compare the execution time of Hadoop and Spark on a dataset that contains 9 text files. We used Python (PySpark) as the programming language for Spark and Java for Hadoop. We ran the program 3 times for each text file and took the average time.Spark runtime result is multiplied by \textbf{100}.It should be noted that we did all the homework in standalone mode. The results are shown in Figure 3.
+For this part, we compare the execution time of Hadoop and Spark on a dataset that contains 9 text files. We used Python (PySpark) as the programming language for Spark and Java for Hadoop. We ran the program 3 times for each text file and took the average time.Spark runtime result is multiplied by \textbf{10}.It should be noted that we did all the homework in standalone mode. The results are shown in Figure 3.
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.65]{Hadoop vs spark.png}
-  \caption{Execution time of Hadoop (1xT) and Spark (100xT).}
+  \caption{Execution time of Hadoop (1xT) and Spark (10xT).}
   \label{fig:hadoop vs spark}
 \end{figure}
 It can be seen from figure 3 that the execution time is 100 times greater for Hadoop compared to Spark except for file 1(https://tinyurl.com/4vxdw3pa) which is approximately 50 times greater.\\
