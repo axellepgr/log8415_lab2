@@ -222,3 +222,6 @@ src/collected_data.json
 src/metrics.json
 
 # End of https://www.gitignore.io/api/macos,linux,django,python,pycharm
+
+img/
+report.tex
