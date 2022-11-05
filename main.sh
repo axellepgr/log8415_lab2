@@ -20,7 +20,7 @@ then
     read -p "Was the previous step completed?(y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
 
     cd log8415_lab2/src
-    python3 launch.py
+    python3 launch3.py
 else
     echo "Installing the following dependencies: boto3 - requests - paramiko"
     pip install boto3==1.24.89
