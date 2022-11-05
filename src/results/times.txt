@@ -1,36 +1,36 @@
 file number 0
-real	0m0.658s
-real	0m0.656s
-real	0m0.732s
+real	0m0.632s
+real	0m0.676s
+real	0m0.625s
 file number 1
-real	0m0.728s
+real	0m0.775s
+real	0m0.698s
 real	0m0.689s
-real	0m0.713s
 file number 2
-real	0m0.685s
-real	0m0.656s
-real	0m0.645s
+real	0m0.705s
+real	0m0.700s
+real	0m0.671s
 file number 3
-real	0m0.662s
-real	0m0.699s
-real	0m0.739s
+real	0m0.655s
+real	0m0.689s
+real	0m0.770s
 file number 4
-real	0m0.656s
-real	0m0.679s
-real	0m0.693s
+real	0m0.733s
+real	0m0.646s
+real	0m0.710s
 file number 5
-real	0m0.651s
-real	0m0.665s
-real	0m0.778s
+real	0m0.699s
+real	0m0.743s
+real	0m0.653s
 file number 6
-real	0m0.688s
-real	0m0.694s
-real	0m0.684s
-file number 7
-real	0m0.687s
-real	0m0.631s
+real	0m0.721s
 real	0m0.718s
+real	0m0.720s
+file number 7
+real	0m0.726s
+real	0m0.739s
+real	0m0.668s
 file number 8
-real	0m0.696s
-real	0m0.725s
-real	0m0.730s
+real	0m0.718s
+real	0m0.637s
+real	0m0.641s

@@ -34,10 +34,19 @@ In this assignment, we use an EC2 instance (M4.large type and under Linux Ubuntu
 
 \section{Setting Up the Environment}
 
+In this section we are going to discuss the steps that lead to setting up an M4.large Linux Ubuntu EC2 instance on AWS and installing Hadoop and Apache Spark on the instance so that it is ready to run our experiments automatically.\newline
+
+\noindent The first step is to setup an M4.large. To do that, we wrote a python script that retrieves the default VPC id and the default subnet id of that VPC. Then, create a security group  which contains a set of rules that filter incoming and outgoing traffic. We allowed HTTP and SSH connections from everywhere (0.0.0.0/0). After that we proceed to the creation of the M4.large instance in the us-east-1 region and associate it the retrieved VPC and subnet and the newly created security group. \newline
+
+\noindent The second step is to prepare the environment of that EC2 instance such that it can run Hadoop and Apache Spark jobs. After creating the instance, we sent multiple bash files to that instance via the scp1 protocol. Those bash files are used to configure Hadoop and Spark to work properly. After sending those bash scripts to the instance, we used a python script to connect to the instance over SSH and download Java 11, Hadoop 3.3.1 and Spark 3.3.1 and put them in the appropriate directories, then launch the configuration bash files to set up Hadoop ans Spark properly.\newline
+
+\noindent Among the files that we sent, we included bash script and Java MapReduce programs to run the Hadoop jobs and a python script to be used by pyspark to run the Spark job. we also sent bash script to launch the experiments that we are going to discuss in the next section.
+
+
 
 \section{Experiments with WordCount}
 \subsection{Hadoop vs. Linux}
-In this part we compare the performance of hadoop and linux on a wordcount task, the performance measure is the real execution time to perform this task. For this purpose we used the contents of Ulysses as an input text file.The results are shown in figure 1.
+In this part we compare the performance of hadoop and linux on a wordcount task, the performance measure is the real execution time to perform this task. For this purpose we used the contents of Ulysses as an input text file.The results are shown in figure 1.\newline
 \begin{figure}[h]
     
      \begin{subfigure}[b]{0.41\textwidth}
